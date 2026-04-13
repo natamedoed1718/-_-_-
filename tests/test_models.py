@@ -44,3 +44,33 @@ def test_product_count(sample_products):
     Category("Cat2", "Desc", sample_products)
 
     assert Category.product_count == 4
+
+
+def test_add_product():
+    category = Category("Test", "Desc", [])
+    product = Product("Test", "Desc", 100, 1)
+
+    category.add_product(product)
+
+    assert "Test" in category.products
+
+
+def test_price_setter():
+    product = Product("Test", "Desc", 100, 1)
+
+    product.price = -10
+
+    assert product.price == 100
+
+
+def test_new_product():
+    data = {
+        "name": "Phone",
+        "description": "Smartphone",
+        "price": 1000,
+        "quantity": 5,
+    }
+
+    product = Product.new_product(data)
+
+    assert product.name == "Phone"
