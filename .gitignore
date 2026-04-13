@@ -206,3 +206,5 @@ __marimo__/
 # Папка настроек PyCharm
 .idea/
 
+.coverage
+coverage.xml
