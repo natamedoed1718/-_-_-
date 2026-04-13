@@ -1,0 +1,46 @@
+import pytest
+
+from shop_pr.models import Category, Product
+
+
+@pytest.fixture
+def sample_products():
+    return [
+        Product("Phone", "Smartphone", 999.99, 10),
+        Product("Laptop", "Gaming laptop", 1999.99, 5),
+    ]
+
+
+def test_product_init():
+    product = Product("TV", "Smart TV", 500.0, 3)
+
+    assert product.name == "TV"
+    assert product.description == "Smart TV"
+    assert product.price == 500.0
+    assert product.quantity == 3
+
+
+def test_category_init(sample_products):
+    category = Category("Electronics", "Devices", sample_products)
+
+    assert category.name == "Electronics"
+    assert category.description == "Devices"
+    assert len(category.products) == 2
+
+
+def test_category_count(sample_products):
+    Category.category_count = 0
+
+    Category("Cat1", "Desc", sample_products)
+    Category("Cat2", "Desc", sample_products)
+
+    assert Category.category_count == 2
+
+
+def test_product_count(sample_products):
+    Category.product_count = 0
+
+    Category("Cat1", "Desc", sample_products)
+    Category("Cat2", "Desc", sample_products)
+
+    assert Category.product_count == 4
