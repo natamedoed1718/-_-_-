@@ -1,6 +1,6 @@
 import pytest
 
-from shop_pr.models import Category, Product
+from shop_pr.models import Category, CategoryIterator, Product
 
 
 @pytest.fixture
@@ -74,3 +74,32 @@ def test_new_product():
     product = Product.new_product(data)
 
     assert product.name == "Phone"
+
+
+def test_product_str():
+    product = Product("Phone", "Desc", 100, 2)
+
+    assert str(product) == "Phone, 100 руб. Остаток: 2 шт."
+
+
+def test_category_str(sample_products):
+    category = Category("Electronics", "Desc", sample_products)
+
+    assert str(category) == "Electronics, количество продуктов: 15 шт."
+
+
+def test_product_add():
+    p1 = Product("A", "Desc", 100, 10)
+    p2 = Product("B", "Desc", 200, 2)
+
+    assert p1 + p2 == 1400
+
+
+def test_category_iterator(sample_products):
+    category = Category("Test", "Desc", sample_products)
+
+    iterator = CategoryIterator(category)
+
+    products = [p for p in iterator]
+
+    assert products == sample_products
