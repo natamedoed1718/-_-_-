@@ -8,6 +8,15 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
+    def __add__(self, other):
+        if not isinstance(other, Product):
+            return NotImplemented
+
+        return self.price * self.quantity + other.price * other.quantity
+
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
     def __eq__(self, other):
         if isinstance(other, str):
             return self.name == other
@@ -61,6 +70,10 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
+    def __str__(self):
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
     # приватный список продуктов
     def add_product(self, product):
         self.__products.append(product)
@@ -73,7 +86,20 @@ class Category:
 
     @property
     def products_info(self):
-        result = ""
-        for product in self.__products:
-            result += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
-        return result.strip()
+        return "\n".join(str(product) for product in self.__products)
+
+
+class CategoryIterator:
+    def __init__(self, category: Category):
+        self._products = category.products
+        self._index = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._index < len(self._products):
+            product = self._products[self._index]
+            self._index += 1
+            return product
+        raise StopIteration
