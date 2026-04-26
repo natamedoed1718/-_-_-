@@ -8,21 +8,18 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
-    def __add__(self, other):
-        if not isinstance(other, Product):
-            return NotImplemented
-
-        return self.price * self.quantity + other.price * other.quantity
-
-    def __str__(self):
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
     def __eq__(self, other):
         if isinstance(other, str):
             return self.name == other
         if isinstance(other, Product):
             return self.name == other.name
         return False
+
+    def __add__(self, other):
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать разные типы продуктов")
+
+        return self.price * self.quantity + other.price * other.quantity
 
     @classmethod
     def new_product(cls, data: dict, products: list["Product"] | None = None):
@@ -70,12 +67,11 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
-    def __str__(self):
-        total_quantity = sum(product.quantity for product in self.__products)
-        return f"{self.name}, количество продуктов: {total_quantity} шт."
-
     # приватный список продуктов
     def add_product(self, product):
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавлять только продукты или их наследников")
+
         self.__products.append(product)
         Category.product_count += 1
 
@@ -86,20 +82,43 @@ class Category:
 
     @property
     def products_info(self):
-        return "\n".join(str(product) for product in self.__products)
+        result = ""
+        for product in self.__products:
+            result += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+        return result.strip()
 
 
-class CategoryIterator:
-    def __init__(self, category: Category):
-        self._products = category.products
-        self._index = 0
+class Smartphone(Product):
+    def __init__(
+            self,
+            name: str,
+            description: str,
+            price: float,
+            quantity: int,
+            efficiency: float,
+            model: str,
+            memory: int,
+            color: str,
+    ):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
 
-    def __iter__(self):
-        return self
 
-    def __next__(self):
-        if self._index < len(self._products):
-            product = self._products[self._index]
-            self._index += 1
-            return product
-        raise StopIteration
+class LawnGrass(Product):
+    def __init__(
+            self,
+            name: str,
+            description: str,
+            price: float,
+            quantity: int,
+            country: str,
+            germination_period: str,
+            color: str,
+    ):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
