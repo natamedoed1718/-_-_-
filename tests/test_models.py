@@ -1,6 +1,6 @@
 import pytest
 
-from shop_pr.models import Category, CategoryIterator, Product
+from c_p.shop_pr.models import Category, Product, Smartphone, LawnGrass
 
 
 @pytest.fixture
@@ -76,30 +76,31 @@ def test_new_product():
     assert product.name == "Phone"
 
 
-def test_product_str():
-    product = Product("Phone", "Desc", 100, 2)
+def test_smartphone_init():
+    phone = Smartphone("iPhone", "Desc", 1000, 5, 95.5, "15 Pro", 256, "Black")
 
-    assert str(product) == "Phone, 100 руб. Остаток: 2 шт."
-
-
-def test_category_str(sample_products):
-    category = Category("Electronics", "Desc", sample_products)
-
-    assert str(category) == "Electronics, количество продуктов: 15 шт."
+    assert phone.name == "iPhone"
+    assert phone.model == "15 Pro"
 
 
-def test_product_add():
-    p1 = Product("A", "Desc", 100, 10)
-    p2 = Product("B", "Desc", 200, 2)
+def test_lawngrass_init():
+    grass = LawnGrass("Grass", "Desc", 100, 20, "USA", "7 days", "Green")
 
-    assert p1 + p2 == 1400
+    assert grass.country == "USA"
 
 
-def test_category_iterator(sample_products):
-    category = Category("Test", "Desc", sample_products)
+def test_add_different_types():
+    phone = Smartphone("iPhone", "Desc", 1000, 5, 90, "X", 128, "Black")
+    grass = LawnGrass("Grass", "Desc", 100, 20, "USA", "7 days", "Green")
 
-    iterator = CategoryIterator(category)
+    with pytest.raises(TypeError):
+        phone + grass
 
-    products = [p for p in iterator]
 
-    assert products == sample_products
+def test_add_invalid_product():
+    category = Category("Test", "Desc", [])
+
+    with pytest.raises(TypeError):
+        category.add_product("not a product")
+
+  
